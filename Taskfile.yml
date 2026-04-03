@@ -29,13 +29,11 @@ tasks:
     desc: Update version from CLI arg, commit, tag, and push (task upv -- 4.8.1)
     cmds:
       - >
-        powershell -NoProfile -ExecutionPolicy Bypass -Command
-        "$ErrorActionPreference='Stop';
-        $v='{{.CLI_ARGS}}'.Trim();
-        if ([string]::IsNullOrWhiteSpace($v)) { throw 'Usage: task upv -- 4.8.1' }
-        if ($v -notmatch '^\d+\.\d+\.\d+$') { throw 'Version must match x.y.z, e.g. 4.8.1' }
-        git diff --quiet --exit-code;
-        if ($LASTEXITCODE -ne 0) { throw 'Working tree is not clean before release. Please commit/stash first.' }"
+        python -c "import re,sys;
+        v='{{.CLI_ARGS}}'.strip();
+        assert v, 'Usage: task upv -- 4.8.1';
+        assert re.match(r'^\d+\.\d+\.\d+$', v), 'Version must match x.y.z, e.g. 4.8.1'"
+      - git diff --quiet --exit-code
       - task set-version VERSION={{.CLI_ARGS}}
       - git add Consts/AppConsts.cs Properties/AssemblyInfo.cs
       - 'git commit -m "chore(release): v{{.CLI_ARGS}}"'
