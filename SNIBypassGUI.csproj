@@ -241,7 +241,7 @@
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="powershell -Command &quot;(Get-FileHash '$(TargetPath)' -Algorithm SHA256).Hash.ToLower().Trim() | Out-File -Encoding ASCII -NoNewline '$(TargetDir)sha256.txt'&quot;" />
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;$sha256=[System.Security.Cryptography.SHA256]::Create();$stream=[System.IO.File]::OpenRead('$(TargetPath)');try{$hashBytes=$sha256.ComputeHash($stream)}finally{$stream.Dispose();$sha256.Dispose()};$hash=[System.BitConverter]::ToString($hashBytes).Replace('-','').ToLowerInvariant();[System.IO.File]::WriteAllText('$(TargetDir)sha256.txt',$hash,[System.Text.Encoding]::ASCII)&quot;" />
   </Target>
   
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
