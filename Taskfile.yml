@@ -1,0 +1,44 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  set-version:
+    desc: Update project version metadata to VERSION
+    requires:
+      vars: [VERSION]
+    cmds:
+      - >
+        python -c "import pathlib,re;
+        v='{{.VERSION}}';
+        v4=f'{v}.0.0';
+        p=pathlib.Path('Consts/AppConsts.cs');
+        s=p.read_text(encoding='utf-8');
+        s=re.sub(r'CurrentVersion\s*=\s*\"V[0-9]+\.[0-9]+(?:\.[0-9]+)?\"', f'CurrentVersion = \"V{v}\"', s);
+        p.write_text(s,encoding='utf-8');
+        p=pathlib.Path('Properties/AssemblyInfo.cs');
+        s=p.read_text(encoding='utf-8');
+        s=re.sub(r'AssemblyVersion\(\"[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\"\)', f'AssemblyVersion(\"{v4}\")', s);
+        s=re.sub(r'AssemblyFileVersion\(\"[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\"\)', f'AssemblyFileVersion(\"{v4}\")', s);
+        p.write_text(s,encoding='utf-8')"
+
+  upv:
+    desc: Update version from CLI arg, commit, tag, and push (task upv -- 4.8.1)
+    cmds:
+      - >
+        powershell -NoProfile -ExecutionPolicy Bypass -Command
+        "$ErrorActionPreference='Stop';
+        $v='{{.CLI_ARGS}}'.Trim();
+        if ([string]::IsNullOrWhiteSpace($v)) { throw 'Usage: task upv -- 4.8.1' }
+        if ($v -notmatch '^\d+\.\d+\.\d+$') { throw 'Version must match x.y.z, e.g. 4.8.1' }
+        git diff --quiet --exit-code;
+        if ($LASTEXITCODE -ne 0) { throw 'Working tree is not clean before release. Please commit/stash first.' }"
+      - task set-version VERSION={{.CLI_ARGS}}
+      - git add Consts/AppConsts.cs Properties/AssemblyInfo.cs
+      - 'git commit -m "chore(release): v{{.CLI_ARGS}}"'
+      - 'git tag -a v{{.CLI_ARGS}} -m "v{{.CLI_ARGS}}"'
+      - git push origin main
+      - git push origin v{{.CLI_ARGS}}
