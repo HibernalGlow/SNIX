@@ -78,8 +78,8 @@ namespace SNIBypassGUI.Consts
         public static readonly string SystemHosts = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "drivers", "etc", "hosts");
 
         public static readonly string UpdateDirectory = Path.Combine(TempDirectory, "Update");
-        public static readonly string NewVersionExe = Path.Combine(UpdateDirectory, "SNIBypassGUI.exe");
-        public static readonly string OldVersionExe = Path.Combine(CurrentDirectory, "SNIBypassGUI.exe.old");
+        public static readonly string NewVersionExe = Path.Combine(UpdateDirectory, "snix.exe");
+        public static readonly string OldVersionExe = Path.Combine(CurrentDirectory, "snix.exe.old");
 
         /// <summary>
         /// The full path of the executable that started the application.

@@ -6,11 +6,11 @@ using System.Windows;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("SNIBypassGUI")]
+[assembly: AssemblyTitle("snix")]
 [assembly: AssemblyDescription("一个通过 Nginx 反向代理实现绕过 SNI 阻断的工具")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Racpast")]
-[assembly: AssemblyProduct("SNIBypassGUI")]
+[assembly: AssemblyProduct("snix")]
 [assembly: AssemblyCopyright("© 2024-2026 Racpast. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

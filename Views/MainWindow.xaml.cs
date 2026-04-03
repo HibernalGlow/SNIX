@@ -20,7 +20,6 @@ using Microsoft.Win32.TaskScheduler;
 using HandyControl.Tools.Extension;
 using Hardcodet.Wpf.TaskbarNotification;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SNIBypassGUI.Common;
 using SNIBypassGUI.Common.Commands;
 using SNIBypassGUI.Common.Extensions;
@@ -398,8 +397,8 @@ namespace SNIBypassGUI.Views
                 (false, false) => ("主服务与DNS服务未运行", Brushes.Red)
             };
 
-            ServiceStatusText.Text = TaskbarIconServiceST.Text = text;
-            ServiceStatusText.Foreground = TaskbarIconServiceST.Foreground = color;
+            ServiceStatusText.Text = text;
+            ServiceStatusText.Foreground = color;
 
             bool isRunning = isNginxRunning || isDnsRunning;
 
@@ -419,23 +418,6 @@ namespace SNIBypassGUI.Views
                             FileUtils.GetFileSize(PathConsts.AcrylicCache) +
                             FileUtils.GetDirectorySize(PathConsts.NginxCacheDirectory);
             CleanBtn.Content = $"清理临时文件 ({total.ToReadableSize()})";
-        }
-
-        private async Task UpdateYiyan()
-        {
-            try
-            {
-                string text = await NetworkUtils.GetAsync("https://v1.hitokoto.cn/?c=d");
-                JObject repodata = JObject.Parse(text);
-                TaskbarIconYiyan.Text = repodata["hitokoto"].ToString();
-                TaskbarIconYiyanFrom.Text = $"—— {repodata["from_who"]}「{repodata["from"]}」";
-            }
-            catch (Exception ex)
-            {
-                WriteLog("Failed to fetch Hitokoto. Using default.", LogLevel.Error, ex);
-                TaskbarIconYiyan.Text = AppConsts.DefaultYiyan;
-                TaskbarIconYiyanFrom.Text = AppConsts.DefaultYiyanFrom;
-            }
         }
 
         private async Task CheckAndInstallService()
@@ -1470,10 +1452,26 @@ namespace SNIBypassGUI.Views
         private void MenuItem_ExitTool_Click(object sender, RoutedEventArgs e) =>
             ExitBtn.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
 
-        public async Task TaskbarIcon_LeftClick()
+        public Task TaskbarIcon_LeftClick()
         {
             MenuItem_ShowMainWin.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
-            await UpdateYiyan();
+            return Task.CompletedTask;
+        }
+
+        private void WindowMinBtn_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void WindowMaxBtn_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            WindowMaxBtn.Content = WindowState == WindowState.Maximized ? "RST" : "MAX";
+        }
+
+        private void WindowCloseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ExitBtn.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
         }
 
         private void MinimizeToTrayBtn_Click(object sender, RoutedEventArgs e)

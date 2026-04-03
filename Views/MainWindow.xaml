@@ -9,7 +9,7 @@
              xmlns:behaviors="clr-namespace:SNIBypassGUI.Behaviors"
              mc:Ignorable="d"
              Loaded="Window_Loaded"
-             Title="SNIBypassGUI" Height="500" Width="800" 
+             Title="snix" Height="500" Width="800" 
              AllowsTransparency="True" ResizeMode="NoResize" 
              Closing="Window_Closing" Background="Transparent"
              WindowStartupLocation="CenterScreen" WindowStyle="None" Opacity="0" d:Opacity="1"
@@ -60,25 +60,6 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <tb:TaskbarIcon x:Name="TaskbarIcon" LeftClickCommand="{Binding TaskbarIconLeftClickCommand}" IconSource="/Resources/icon.ico">
-                <tb:TaskbarIcon.TrayToolTip>
-                    <ToolTip Background="Transparent" BorderThickness="0" HasDropShadow="False" Placement="Mouse">
-                        <ToolTip.Template>
-                            <ControlTemplate TargetType="ToolTip">
-                                <ContentPresenter />
-                            </ControlTemplate>
-                        </ToolTip.Template>
-                        <Border Background="{DynamicResource BackgroundBrush}" Padding="10" CornerRadius="8">
-                            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Width="250" Height="auto">
-                                <StackPanel>
-                                    <TextBlock Foreground="CornflowerBlue" Text="SNIBypassGUI" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" FontFamily="{StaticResource LXGWWenKai-Regular}"/>
-                                    <TextBlock x:Name="TaskbarIconServiceST" Text="主服务和DNS服务未运行" Foreground="Red" Margin="5,0,5,5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" FontFamily="{StaticResource LXGWWenKai-Regular}"/>
-                                    <TextBlock Foreground="DeepPink" x:Name="TaskbarIconYiyan" Margin="5,0,5,5" TextWrapping="Wrap" Text="休对故人思故国，且将新火试新茶。诗酒趁年华。" HorizontalAlignment="Left" VerticalAlignment="Center" FontFamily="{StaticResource LXGWWenKai-Regular}"/>
-                                    <TextBlock Foreground="DarkViolet" x:Name="TaskbarIconYiyanFrom" Margin="5,0,5,5" TextWrapping="Wrap" Text="—— 苏轼「望江南·超然台作」" TextAlignment="Right" VerticalAlignment="Center" FontStyle="Italic" FontFamily="{StaticResource LXGWWenKai-Regular}"/>
-                                </StackPanel>
-                            </Border>
-                        </Border>
-                    </ToolTip>
-                </tb:TaskbarIcon.TrayToolTip>
                 <tb:TaskbarIcon.ContextMenu>
                     <ContextMenu>
                         <ContextMenu.Resources>
@@ -166,14 +147,20 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Margin="5" x:Name="WindowTitle" TextWrapping="Wrap" Text="SNIBypassGUI" FontSize="21" Foreground="#FFB700FF" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+                        <TextBlock Margin="5" x:Name="WindowTitle" TextWrapping="Wrap" Text="snix" FontSize="21" Foreground="#FFB700FF" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
                         <CheckBox x:Name="ThemeSwitchTB" behaviors:ToggleButtonAttach.IsAutoFold="True" Margin="0,0,8,0" Visibility="Visible" Checked="ThemeSwitchTB_Checked" Unchecked="ThemeSwitchTB_Unchecked" Style="{StaticResource ThemeSwitchStyle}" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <CheckBox.Content>
                                 <TextBlock x:Name="ThemeSwitchTBText" Text="切换主题" Foreground="#F3C62B"/>
                             </CheckBox.Content>
                         </CheckBox>
+                        <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,6,0">
+                            <Button x:Name="WindowMinBtn" Width="34" Height="24" Margin="0,0,4,0" Click="WindowMinBtn_Click" Content="MIN" Background="Transparent" BorderBrush="Transparent" Foreground="#FF1B77D1" FontWeight="Bold"/>
+                            <Button x:Name="WindowMaxBtn" Width="34" Height="24" Margin="0,0,4,0" Click="WindowMaxBtn_Click" Content="MAX" Background="Transparent" BorderBrush="Transparent" Foreground="#FF1B77D1" FontWeight="Bold"/>
+                            <Button x:Name="WindowCloseBtn" Width="34" Height="24" Click="WindowCloseBtn_Click" Content="X" Background="Transparent" BorderBrush="Transparent" Foreground="#FFE14242" FontWeight="Bold"/>
+                        </StackPanel>
                     </Grid>
                 </Border>
             </hc:TransitioningContentControl>
