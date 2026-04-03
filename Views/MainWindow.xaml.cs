@@ -899,6 +899,29 @@ namespace SNIBypassGUI.Views
             bool autoCheckUpdate = settings.Program.AutoCheckUpdate;
             AutoCheckUpdateBtn.Content = $"自动检查更新：{autoCheckUpdate.ToOnOff()}";
 
+            bool closeToTray = settings.Program.CloseToTrayOnClose;
+            CloseToTrayOnCloseBtn.Content = $"关闭到托盘：{closeToTray.ToOnOff()}";
+
+            bool enableBackground = settings.Program.EnableBackground;
+            EnableBackgroundBtn.Content = $"背景切换：{enableBackground.ToOnOff()}";
+            CustomBkgBtn.IsEnabled = enableBackground;
+            DefaultBkgBtn.IsEnabled = enableBackground;
+            CurrentImage.Visibility = enableBackground ? Visibility.Visible : Visibility.Collapsed;
+            NextImage.Visibility = enableBackground ? Visibility.Visible : Visibility.Collapsed;
+
+            if (enableBackground)
+            {
+                if (CurrentImage.Source == null)
+                    CurrentImage.Source = BackgroundService.CurrentImage;
+                CurrentImage.Opacity = 1.0;
+                NextImage.Opacity = 0.0;
+            }
+            else
+            {
+                CurrentImage.Source = null;
+                NextImage.Source = null;
+            }
+
             bool autoSwitch = settings.Program.AutoSwitchAdapter;
             AutoSwitchAdapterBtn.Content = $"自动：{autoSwitch.ToOnOff()}";
             AdaptersCombo.IsEnabled = !autoSwitch;
@@ -1466,12 +1489,16 @@ namespace SNIBypassGUI.Views
         private void WindowMaxBtn_Click(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
-            WindowMaxBtn.Content = WindowState == WindowState.Maximized ? "RST" : "MAX";
+            WindowMaxBtn.Content = WindowState == WindowState.Maximized ? "❐" : "□";
+            WindowMaxBtn.ToolTip = WindowState == WindowState.Maximized ? "还原" : "最大化";
         }
 
         private void WindowCloseBtn_Click(object sender, RoutedEventArgs e)
         {
-            ExitBtn.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+            if (ConfigManager.Instance.Settings.Program.CloseToTrayOnClose)
+                MinimizeToTrayBtn.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+            else
+                ExitBtn.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
         }
 
         private void MinimizeToTrayBtn_Click(object sender, RoutedEventArgs e)
@@ -1489,7 +1516,10 @@ namespace SNIBypassGUI.Views
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
-            MinimizeToTrayBtn.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+            if (ConfigManager.Instance.Settings.Program.CloseToTrayOnClose)
+                MinimizeToTrayBtn.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+            else
+                ExitBtn.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
         }
 
         private void MenuItem_MouseEnter(object sender, MouseEventArgs e)
@@ -1650,6 +1680,30 @@ namespace SNIBypassGUI.Views
             ApplySettings();
         }
 
+        private void CloseToTrayOnCloseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool current = ConfigManager.Instance.Settings.Program.CloseToTrayOnClose;
+            ConfigManager.Instance.Settings.Program.CloseToTrayOnClose = !current;
+            ConfigManager.Instance.Save();
+            ApplySettings();
+        }
+
+        private void EnableBackgroundBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool current = ConfigManager.Instance.Settings.Program.EnableBackground;
+            bool newState = !current;
+            ConfigManager.Instance.Settings.Program.EnableBackground = newState;
+            ConfigManager.Instance.Save();
+
+            if (newState)
+            {
+                BackgroundService.ReloadConfig();
+                BackgroundService.ValidateCurrentImage();
+            }
+
+            ApplySettings();
+        }
+
         private void ThemeSwitchTB_Checked(object sender, RoutedEventArgs e)
         {
             SwitchTheme(true);
@@ -1689,6 +1743,7 @@ namespace SNIBypassGUI.Views
         private void OnBackgroundChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName != "CurrentImage") return;
+            if (!ConfigManager.Instance.Settings.Program.EnableBackground) return;
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 NextImage.Opacity = 0.0;

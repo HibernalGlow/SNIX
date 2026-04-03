@@ -157,9 +157,9 @@
                             </CheckBox.Content>
                         </CheckBox>
                         <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,6,0">
-                            <Button x:Name="WindowMinBtn" Width="34" Height="24" Margin="0,0,4,0" Click="WindowMinBtn_Click" Content="MIN" Background="Transparent" BorderBrush="Transparent" Foreground="#FF1B77D1" FontWeight="Bold"/>
-                            <Button x:Name="WindowMaxBtn" Width="34" Height="24" Margin="0,0,4,0" Click="WindowMaxBtn_Click" Content="MAX" Background="Transparent" BorderBrush="Transparent" Foreground="#FF1B77D1" FontWeight="Bold"/>
-                            <Button x:Name="WindowCloseBtn" Width="34" Height="24" Click="WindowCloseBtn_Click" Content="X" Background="Transparent" BorderBrush="Transparent" Foreground="#FFE14242" FontWeight="Bold"/>
+                            <Button x:Name="WindowMinBtn" Width="34" Height="24" Margin="0,0,4,0" Click="WindowMinBtn_Click" Content="−" ToolTip="最小化" Background="Transparent" BorderBrush="Transparent" Foreground="#FF1B77D1" FontWeight="Bold" FontFamily="Segoe UI Symbol" FontSize="14"/>
+                            <Button x:Name="WindowMaxBtn" Width="34" Height="24" Margin="0,0,4,0" Click="WindowMaxBtn_Click" Content="□" ToolTip="最大化" Background="Transparent" BorderBrush="Transparent" Foreground="#FF1B77D1" FontWeight="Bold" FontFamily="Segoe UI Symbol" FontSize="13"/>
+                            <Button x:Name="WindowCloseBtn" Width="34" Height="24" Click="WindowCloseBtn_Click" Content="×" ToolTip="关闭" Background="Transparent" BorderBrush="Transparent" Foreground="#FFE14242" FontWeight="Bold" FontFamily="Segoe UI Symbol" FontSize="14"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -733,6 +733,17 @@
                                             </Grid.RowDefinitions>
                                             <Button x:Name="UpdateBtn" hc:BorderElement.CornerRadius="8" hc:IconElement.Geometry="{StaticResource UpdateGeometry}" Click="UpdateBtn_Click" Margin="10,10,5,10" HorizontalAlignment="Stretch" Content="更新数据"  Background="{DynamicResource BackgroundBrush}" FontSize="15" Padding="4" Foreground="#FF2100C3" BorderBrush="#FF2100C3" VerticalContentAlignment="Center"/>
                                             <Button x:Name="AutoCheckUpdateBtn" hc:BorderElement.CornerRadius="8" hc:IconElement.Geometry="{StaticResource FindGeometry}" Click="AutoCheckUpdateBtn_Click" Grid.Column="1" Margin="5,10,10,10" HorizontalAlignment="Stretch" Content="自动检查更新：关"  Background="{DynamicResource BackgroundBrush}" FontSize="15" Padding="4" Foreground="#FF2100C3" BorderBrush="#FF2100C3" VerticalContentAlignment="Center"/>
+                                        </Grid>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <Button x:Name="CloseToTrayOnCloseBtn" hc:BorderElement.CornerRadius="8" hc:IconElement.Geometry="{StaticResource WindowsGeometry}" Click="CloseToTrayOnCloseBtn_Click" Margin="10,0,5,10" HorizontalAlignment="Stretch" Content="关闭到托盘：开" Background="{DynamicResource BackgroundBrush}" FontSize="15" Padding="4" Foreground="#FF2100C3" BorderBrush="#FF2100C3" VerticalContentAlignment="Center"/>
+                                            <Button x:Name="EnableBackgroundBtn" hc:BorderElement.CornerRadius="8" hc:IconElement.Geometry="{StaticResource CustomGeometry}" Click="EnableBackgroundBtn_Click" Grid.Column="1" Margin="5,0,10,10" HorizontalAlignment="Stretch" Content="背景切换：开" Background="{DynamicResource BackgroundBrush}" FontSize="15" Padding="4" Foreground="#FF21C500" BorderBrush="#FF21C500" VerticalContentAlignment="Center"/>
                                         </Grid>
                                         <Button x:Name="CleanBtn" hc:BorderElement.CornerRadius="8" hc:IconElement.Geometry="{StaticResource CleanGeometry}" Click="CleanBtn_Click" Margin="10,0,10,10" HorizontalAlignment="Stretch" Content="清理临时文件" Background="{DynamicResource BackgroundBrush}" FontSize="15" Padding="4" Foreground="#FF2100C3" BorderBrush="#FF2100C3" VerticalContentAlignment="Center"/>
                                         <Grid>

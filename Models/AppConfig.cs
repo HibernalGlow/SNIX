@@ -44,6 +44,8 @@ namespace SNIBypassGUI.Models
         public string SpecifiedAdapter { get; set; } = "";
         public bool AutoSwitchAdapter { get; set; } = true;
         public bool AutoCheckUpdate { get; set; } = true;
+        public bool CloseToTrayOnClose { get; set; } = true;
+        public bool EnableBackground { get; set; } = true;
     }
 
     public class AdvancedConfig
