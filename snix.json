@@ -1,23 +1,23 @@
 {
-  "version": "4.6",
+  "version": "4.8",
   "description": "一个通过 Nginx 反向代理实现绕过 SNI 阻断的工具，基于 Pixiv-Nginx-GUI 进行功能扩展与改进",
-  "homepage": "https://github.com/racpast/SNIBypassGUI",
+  "homepage": "https://github.com/HibernalGlow/SNIX",
   "license": "Unknown",
-  "url": "https://github.com/racpast/SNIBypassGUI/releases/download/v4.6/SNIBypassGUI-v4.6.zip",
-  "hash": "sha256:408157ba58159904d324fd54416f9c7a6d45d0f81fd246187e8cc74f97552ce8",
-  "bin": "SNIBypassGUI.exe",
+  "url": "https://github.com/HibernalGlow/SNIX/releases/download/v4.8/snix.exe",
+  "hash": "546804c125626544131e207305cb21eb0ca568848deeb6cba219ae1f89a7d44f",
+  "bin": "snix.exe",
   "shortcuts": [
     [
-      "SNIBypassGUI.exe",
-      "SNIBypassGUI"
+      "snix.exe",
+      "snix"
     ]
   ],
   "checkver": {
-    "url": "https://api.github.com/repos/racpast/SNIBypassGUI/releases/latest",
+    "url": "https://api.github.com/repos/HibernalGlow/SNIX/releases/latest",
     "jsonpath": "$.tag_name",
     "regex": "v([\\d.]+)"
   },
   "autoupdate": {
-    "url": "https://github.com/racpast/SNIBypassGUI/releases/download/v$matchHead/SNIBypassGUI-v$matchHead.zip"
+    "url": "https://github.com/HibernalGlow/SNIX/releases/download/v$version/snix.exe"
   }
 }
