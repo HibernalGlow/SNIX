@@ -2,9 +2,7 @@ name: Build C# App
 
 on:
   push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+    tags: ["v*"]
   workflow_dispatch:
 
 permissions:
@@ -40,10 +38,19 @@ jobs:
           if-no-files-found: error
 
       - name: Resolve release tag
-        if: github.event_name != 'pull_request'
         id: release_tag
         shell: pwsh
         run: |
+          if ("${{ github.ref_type }}" -eq "tag") {
+            $tag = "${{ github.ref_name }}"
+            if (-not $tag.StartsWith("v")) {
+              $tag = "v$tag"
+            }
+            "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "resolved_version=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            exit 0
+          }
+
           $appConsts = Get-Content -Raw "Consts/AppConsts.cs"
           if ($appConsts -notmatch 'CurrentVersion\s*=\s*"V?([0-9]+\.[0-9]+(?:\.[0-9]+)?)"') {
             throw "Cannot parse CurrentVersion from Consts/AppConsts.cs"
@@ -83,7 +90,6 @@ jobs:
           "resolved_version=$candidate" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
       - name: Create GitHub Release
-        if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.release_tag.outputs.tag }}
