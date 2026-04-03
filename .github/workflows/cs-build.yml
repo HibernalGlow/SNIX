@@ -7,6 +7,9 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -35,3 +38,57 @@ jobs:
             bin/Release/snix.exe
             bin/Release/sha256.txt
           if-no-files-found: error
+
+      - name: Resolve release tag
+        if: github.event_name != 'pull_request'
+        id: release_tag
+        shell: pwsh
+        run: |
+          $appConsts = Get-Content -Raw "Consts/AppConsts.cs"
+          if ($appConsts -notmatch 'CurrentVersion\s*=\s*"V?([0-9]+\.[0-9]+(?:\.[0-9]+)?)"') {
+            throw "Cannot parse CurrentVersion from Consts/AppConsts.cs"
+          }
+
+          $baseVersion = $matches[1]
+          $parts = $baseVersion.Split('.')
+          $majorMinor = if ($parts.Length -ge 2) { "$($parts[0]).$($parts[1])" } else { $baseVersion }
+
+          $remoteTags = git ls-remote --tags origin "refs/tags/v$majorMinor*" | ForEach-Object { ($_ -split "`t")[-1] }
+          $remoteTags = $remoteTags | Where-Object { $_ -notmatch '\^\{\}$' }
+
+          $exists = @{}
+          foreach ($tagRef in $remoteTags) {
+            $tagName = $tagRef -replace '^refs/tags/', ''
+            $exists[$tagName] = $true
+          }
+
+          $candidate = "v$baseVersion"
+          if ($exists.ContainsKey($candidate)) {
+            $maxPatch = -1
+            foreach ($tagName in $exists.Keys) {
+              if ($tagName -eq "v$majorMinor") {
+                if ($maxPatch -lt 0) { $maxPatch = 0 }
+              }
+              elseif ($tagName -match "^v$([regex]::Escape($majorMinor))\.(\d+)$") {
+                $patch = [int]$matches[1]
+                if ($patch -gt $maxPatch) { $maxPatch = $patch }
+              }
+            }
+
+            if ($maxPatch -lt 0) { $maxPatch = 0 }
+            $candidate = "v$majorMinor.$($maxPatch + 1)"
+          }
+
+          "tag=$candidate" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "resolved_version=$candidate" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Create GitHub Release
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release_tag.outputs.tag }}
+          name: snix ${{ steps.release_tag.outputs.resolved_version }}
+          generate_release_notes: true
+          files: |
+            bin/Release/snix.exe
+            bin/Release/sha256.txt
